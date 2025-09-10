@@ -10,7 +10,8 @@ const delay = require('../middleware/delay');
 
 const routerAPI = express.Router();
 
-routerAPI.all("/{*any}", auth);
+// Công khai các route không cần auth: /, /register, /login
+// Áp dụng auth cho các route còn lại nếu cần (ví dụ: /user, /account)
 
 
 routerAPI.get("/", (req, res) => {
@@ -20,7 +21,7 @@ routerAPI.get("/", (req, res) => {
 routerAPI.post("/register", createUser);
 routerAPI.post("/login", handleLogin);
 
-routerAPI.get("/user", getUser);
-routerAPI.get("/account", delay, getAccount);
+routerAPI.get("/user", auth, getUser);
+routerAPI.get("/account", auth, delay, getAccount);
 
 module.exports = routerAPI; //export default

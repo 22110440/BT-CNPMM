@@ -7,28 +7,45 @@ const saltRounds = 10;
 const createUserService = async (name, email, password) => {
     try {
         //check user exist
-        const user = await User.findOne({
+        const existingUser = await User.findOne({
             email: email
         });
-        if (user) {
-            console.log(`>>> user exist, chon 1 email khac: ${email}`);
-            return null;
+        if (existingUser) {
+            return {
+                EC: 1,
+                EM: "Email đã tồn tại",
+                DT: null
+            };
         }
 
         //hash user password
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         //save user to database
-        let result = await User.create({
+        const createdUser = await User.create({
             name: name,
             email: email,
             password: hashedPassword,
             role: "User"
         });
-        return result;
+
+        return {
+            EC: 0,
+            EM: "Tạo tài khoản thành công",
+            DT: {
+                id: createdUser._id,
+                name: createdUser.name,
+                email: createdUser.email,
+                role: createdUser.role
+            }
+        };
     } catch (error) {
         console.log(error);
-        return null;
+        return {
+            EC: -1,
+            EM: "Đã xảy ra lỗi phía server",
+            DT: null
+        };
     }
 }
 

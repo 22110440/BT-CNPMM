@@ -20,7 +20,7 @@ const dbState = [{
 ];
 
 const connection = async () => {
-    await mongoose.connect(process.env.MONGO_DB_URL);
+    await mongoose.connect(uri);
     const state = Number(mongoose.connection.readyState);
     console.log(dbState.find(f => f.value === state).label, "to database");
 }
